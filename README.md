@@ -1,16 +1,16 @@
-*Project Title*
+# Project Title
 Space Aliens.
 
-*Link*
+## Link
 [https://alvin-okoli.github.io/Phaser/](https://alvin-okoli.github.io/Phaser-Beginner-tutorials/)
 
-*A brief description of your project.*
+## A brief description of your project.
 THis is a beginner arcade phaser 3 project to build a 
 
-*Features*
+## Features
 - 
 
-*Technologies Used*
+## **Technologies Used**
 -HTML 
 -Javascript and 
 -Phaser 3
