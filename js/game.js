@@ -1,9 +1,11 @@
 /* global Phaser */
 
 import SplashScene from './splashScene.js'
+import TitleScene from './titleScene.js'
 
 // Our game scene
-const splashScene = new SplashScene()
+const splashScene = new SplashScene();
+const titleScene = new TitleScene();
 
 const config = {
     type: Phaser.AUTO,
@@ -26,5 +28,6 @@ const game = new Phaser.Game(config)
 
 // load scene
 game.scene.add('splashScene', splashScene)
+game.scene.add('scene', titleScene)
 
 game.scene.start('splashScene')
