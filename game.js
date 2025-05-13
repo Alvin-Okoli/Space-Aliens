@@ -1,5 +1,10 @@
 /* global Phaser */
 
+import SplashScene from './splashScene.js'
+
+// Our game scene
+const splashScene = new SplashScene()
+
 const config = {
     type: Phaser.AUTO,
     width: 1920,
@@ -13,9 +18,13 @@ const config = {
     backgroundColor: 0x5f6e7a,
     scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CNTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH
     }
 }
 
 const game = new Phaser.Game(config)
-console.log(game)
+
+// load scene
+game.scene.add('splashScene', splashScene)
+
+game.scene.start('splashScene')
