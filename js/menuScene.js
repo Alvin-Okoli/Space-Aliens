@@ -6,7 +6,7 @@ class MenuScene extends Phaser.Scene{
     }
 
     init(data){
-        this.cameras.main.add(#ffffff)
+        this.cameras.main.setBackgroundColor(#ffffff)
     }
 
     preload(){
