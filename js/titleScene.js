@@ -7,7 +7,7 @@ class TitleScene extends Phaser.Scene{
     }
 
     init(data){
-        this.camera.main.setBackgroundColor('#111111')
+        this.camera.main.setBackgroundColor('#ffffff')
     }
 
     preload(){
