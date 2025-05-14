@@ -11,7 +11,7 @@ class TitleScene extends Phaser.Scene{
     }
 
     init(data){
-        this.cameras.main.setBackgroundColor('##ffffff')
+        this.cameras.main.setBackgroundColor('#ffffff')
     }
 
     preload(){
@@ -20,7 +20,7 @@ class TitleScene extends Phaser.Scene{
     }
 
     create(data){
-        this.titleSceneBackgroundImage = this.sprite.add(0, 0, 'titleSceneBackground').setScale(2.75)
+        this.titleSceneBackgroundImage = this.add.sprite(0, 0, 'titleSceneBackground').setScale(2.75)
         this.titleSceneBackgroundImage.x = 1920 / 2
         this.titleSceneBackgroundImage.y = 1080 / 2
 
@@ -28,7 +28,9 @@ class TitleScene extends Phaser.Scene{
     }
 
     update(time, delta){
-
+        if(time > 6000){
+            this.scene.switch('menuScene')
+        }
     }
 }
 
