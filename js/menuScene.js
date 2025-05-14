@@ -6,11 +6,11 @@ class MenuScene extends Phaser.Scene{
     }
 
     init(data){
-
+        this.cameras.main.add(#ffffff)
     }
 
     preload(){
-
+        console.log('menu scene')
     }
 
     create(data){
