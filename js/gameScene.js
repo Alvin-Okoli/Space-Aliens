@@ -1,6 +1,18 @@
 /* global Phaser */ 
 
 class GameScene extends Phaser.Scene{
+
+    // create an alien
+    createAlien(){
+        const alienXLocation = Math.floor(Math.random() * 1920) + 1
+        let alienXvelocity = Math.floor(Math.random() * 50) + 1
+        alienXvelocity = Math.round(Math.random())? 1 : -1
+        const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
+        anAlien.body.velocity.y = 200
+        anAlien.body.velocity.x = 200
+        this.aliensGroup.add(anAlien)
+    }
+
     constructor(){
         super({key: 'gameScene'})
 
@@ -20,9 +32,11 @@ class GameScene extends Phaser.Scene{
         this.load.image('starBackground', 'assets/starBackground.png')
         this.load.image('ship', 'assets/spaceShip.png')
         this.load.image('misile', 'assets/missile.png')
+        this.load.image('alien', 'assets/alien.png')
 
         //audio
         this.load.audio('laser', 'assets/laser1.wav')
+        this.load.audio('explosion', 'assets/barrelExploding.wav')
     }
 
     create(data){
@@ -33,6 +47,17 @@ class GameScene extends Phaser.Scene{
 
         //Create a group for the missles
         this.missileGroup = this.physics.add.group()
+        this.aliensGroup = this.add.group()
+        this.createAlien()
+
+        // Collision between missles and aliens
+        this.physics.add.collider(this.missileGroup, this.aliensGroup, function(missileCollide, alienCollide){
+            missileCollide.destroy()
+            alienCollide.destroy()
+            this.sound.play('explosion')
+            this.createAlien()
+            this.createAlien()
+        }.bind(this))
     }
 
     update(time, delta){
