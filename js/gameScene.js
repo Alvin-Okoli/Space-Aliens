@@ -56,8 +56,8 @@ class GameScene extends Phaser.Scene{
 
         this.ship = this.physics.add.sprite(1920/2, 1080 - 100, 'ship')
 
-        this.startButton = this.add.sprite(1920/2, 1080 - 800 , 'startButton').setVisible(false);
-        this.menuButton = this.add.sprite(1920/2, 1080 - 1000, 'menuButton').setVisible(false);
+        this.startButton = this.add.sprite(1920/2, 1080 - 700 , 'startButton').setVisible(false);
+        this.menuButton = this.add.sprite(1920/2, 1080 - 500, 'menuButton').setVisible(false);
 
         //Create a group for the missles
         this.missileGroup = this.physics.add.group()
@@ -81,7 +81,7 @@ class GameScene extends Phaser.Scene{
             this.physics.pause()
             shipCollide.destroy()
             alienCollide.destroy()
-            this.gameOverText = this.add.text(1920/2, 1080 - 600, 'Game Over!\nScore: ' + this.score, this.gameTextStyle).setOrigin(0.5)
+            this.gameOverText = this.add.text(1920/2, 1080 - 800, 'Game Over!\nScore: ' + this.score, this.gameTextStyle).setOrigin(0.5)
 
             this.startButton.setVisible(true);
             this.menuButton.setVisible(true);
