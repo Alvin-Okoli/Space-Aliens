@@ -56,8 +56,8 @@ class GameScene extends Phaser.Scene{
 
         this.ship = this.physics.add.sprite(1920/2, 1080 - 100, 'ship')
 
-        this.startButton = this.add.sprite(1920/2, 1080 - 700 , 'startButton').setVisible(false);
-        this.menuButton = this.add.sprite(1920/2, 1080 - 500, 'menuButton').setVisible(false);
+        this.startButton = this.add.sprite(1920/2, 1080 - 400 , 'startButton').setVisible(false);
+        this.menuButton = this.add.sprite(1920/2, 1080 - 200, 'menuButton').setVisible(false);
 
         //Create a group for the missles
         this.missileGroup = this.physics.add.group()
