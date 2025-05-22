@@ -19,6 +19,14 @@ class GameScene extends Phaser.Scene{
         this.background = null;
         this.ship = null;
         this.fireMissle = false;
+        this.score = 0;
+        this.scoreText = null;
+        this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' };
+
+        this.gameText = null;
+        this.gameTextStyle = { font: '65px Times', fill: '#ff0000', align: 'center' }
+        this.startButton = this.add.sprite(1920/2, 1080 - 600 , 'assets/start.png');
+        this.menuButton = this.add.sprite(1920/2, 1080 - 800, 'assets/menu_button.png');
     }
 
     init(data){
@@ -37,11 +45,14 @@ class GameScene extends Phaser.Scene{
         //audio
         this.load.audio('laser', 'assets/laser1.wav')
         this.load.audio('explosion', 'assets/barrelExploding.wav')
+        this.load.audio('bomb', 'assets/bomb.wav')
     }
 
     create(data){
         this.background = this.add.sprite(0, 0, 'starBackground').setScale(2.0)
         this.background.setOrigin(0, 0)
+        
+        this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle)
 
         this.ship = this.physics.add.sprite(1920/2, 1080 - 100, 'ship')
 
@@ -55,9 +66,27 @@ class GameScene extends Phaser.Scene{
             missileCollide.destroy()
             alienCollide.destroy()
             this.sound.play('explosion')
+            this.score += 1;
             this.createAlien()
             this.createAlien()
         }.bind(this))
+
+        //Collision between ship and alien
+        this.physics.add.collider(this.ship, this.aliensGroup, function (shipCollide, alienCollide){
+            this.sound.play('bomb');
+            this.physics.pause()
+            shipCollide.destroy()
+            alienCollide.destroy()
+            this.gameOverText = this.add.text(1920 - 400, 1080 / 2, 'Game Over!', this.gameTextStyle).setOrigin(0.5)
+            this.startButton.setInteractive({useHandCursor: true})
+            this.startButton.on('pointerdown', function(){
+            this.scene.start('gameScene')
+            }.bind(this))
+            this.menuButton.setInteractive({useHandCursor: true})
+            this.menuButton.on('pointerdown', function(){
+            this.scene.start('menuScene')
+            }.bind(this))
+        })
     }
 
     update(time, delta){
