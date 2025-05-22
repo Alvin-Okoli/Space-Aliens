@@ -9,7 +9,7 @@ class GameScene extends Phaser.Scene{
         alienXvelocity = Math.round(Math.random())? 1 : -1
         const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
         anAlien.body.velocity.y = 200
-        anAlien.body.velocity.x = 200
+        anAlien.body.velocity.x = alienXvelocity
         this.aliensGroup.add(anAlien)
     }
 
@@ -70,17 +70,18 @@ class GameScene extends Phaser.Scene{
             alienCollide.destroy()
             this.sound.play('explosion')
             this.score += 1;
+            this.scoreText.setText('Score: ' + this.score.toString())
             this.createAlien()
             this.createAlien()
         }.bind(this))
 
         //Collision between ship and alien
         this.physics.add.collider(this.ship, this.aliensGroup, function (shipCollide, alienCollide){
-            this.sound.play('bomb');
+            this.sound.play('bomb')
             this.physics.pause()
             shipCollide.destroy()
             alienCollide.destroy()
-            this.gameOverText = this.add.text(1920 - 400, 1080 / 2, 'Game Over!', this.gameTextStyle).setOrigin(0.5)
+            this.gameOverText = this.add.text(1920/2, 1080 / 2, 'Game Over!\nScore: ', this.gameTextStyle).setOrigin(0.5)
 
             this.startButton.setVisible(true);
             this.menuButton.setVisible(true);
@@ -94,7 +95,7 @@ class GameScene extends Phaser.Scene{
             this.menuButton.on('pointerdown', function(){
             this.scene.start('menuScene')
             }.bind(this))
-        })
+        }.bind(this))
     }
 
     update(time, delta){
