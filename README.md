@@ -7,7 +7,7 @@ Space Aliens.
 
 
 ## A brief description of your project.
-THis is a beginner arcade phaser 3 project to build a 
+
 
 
 ## Features
