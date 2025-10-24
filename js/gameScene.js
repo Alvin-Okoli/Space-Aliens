@@ -153,9 +153,9 @@ class GameScene extends Phaser.Scene{
 
         //Collision between ship and alien
         this.physics.add.collider(this.ship, this.aliensGroup, (shipCollide, alienCollide)=>{
-            // this.sound.play('bomb')
+            this.sound.play('bomb')
             this.physics.pause();
-            // shipCollide.destroy();
+            shipCollide.destroy();
             alienCollide.destroy();
             this.touchFire = false;
             this.gameOverText = this.add.text(450/2, 800 - 600, 'Game Over!\nScore: ' + this.score, this.gameTextStyle).setOrigin(0.5)

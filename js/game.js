@@ -16,7 +16,7 @@ const config = {
         }
     },
     backgroundColor: 0xffffff,
-    scene: [  MenuScene, GameScene],
+    scene: [ SplashScene, TitleScene, MenuScene, GameScene],
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
@@ -24,5 +24,3 @@ const config = {
 }
 
 const game = new Phaser.Game(config)
-
-// SplashScene, TitleScene, ,
