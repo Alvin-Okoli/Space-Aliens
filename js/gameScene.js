@@ -4,13 +4,45 @@ class GameScene extends Phaser.Scene{
 
     // create an alien
     createAlien(){
-        const alienXLocation = Math.floor(Math.random() * 1920) + 1
-        let alienXvelocity = Math.floor(Math.random() * 50) + 1
-        alienXvelocity = Math.round(Math.random())? 1 : -1
-        const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
+        const alienXLocation = Math.floor(Math.random() * 400)+20;
+        const alienYLocation = Math.floor(Math.random() * 50)*-1;
+        const anAlien = this.physics.add.sprite(alienXLocation, -20, 'alien').setScale(0.3)
         anAlien.body.velocity.y = 200
-        anAlien.body.velocity.x = alienXvelocity
         this.aliensGroup.add(anAlien)
+    }
+
+    createRock(){
+        const rockXlocation = Math.floor(Math.random()*400)+20;
+        const rockYLocation = Math.floor(Math.random() * 50)*-1;
+        const randomRock = Math.floor(Math.random()*10)+1;
+
+        let aRock;
+        if(randomRock === 1 || randomRock === 2){
+            aRock = this.physics.add.sprite(rockXlocation, rockYLocation, `rock${randomRock}`).setScale(0.6);
+            aRock.health = 2;
+        } 
+        else if(randomRock === 9){
+            aRock = this.physics.add.sprite(rockXlocation, rockYLocation, `rock${randomRock}`).setScale(1.2);
+            aRock.health = 4;
+        } 
+        else {
+            aRock = this.physics.add.sprite(rockXlocation, rockYLocation, `rock${randomRock}`).setScale(0.8);
+            aRock.health = 3;
+        }
+        this.rockGroup.add(aRock);
+        aRock.body.velocity.y = 200;
+        aRock.maxHealth = aRock.health;
+        
+
+        for(let i=0; i<4; i++){
+            const smallrockXlocation = Math.floor(Math.random()*400)+20;
+            const smallrockYLocation = Math.floor(Math.random() * 50)*-1;            
+            const smallRock = this.physics.add.sprite(smallrockXlocation, smallrockYLocation, 'rock3').setScale(0.3)
+            this.rockGroup.add(smallRock);
+            smallRock.health = 1;
+            smallRock.maxHealth = smallRock.health;
+            smallRock.body.velocity.y = 200            
+        }
     }
 
     constructor(){
@@ -19,12 +51,13 @@ class GameScene extends Phaser.Scene{
         this.background = null;
         this.ship = null;
         this.fireMissle = false;
+        this.touchFire = false;
         this.score = 0;
         this.scoreText = null;
-        this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' };
+        this.scoreTextStyle = { font: '30px Arial', fill: '#ffffff', align: 'center' };
 
         this.gameText = null;
-        this.gameTextStyle = { font: '65px Times', fill: '#ff0000', align: 'center' }
+        this.gameTextStyle = { font: '30px Times', fill: '#ff0000', align: 'center' }
     }
 
     init(data){
@@ -35,67 +68,145 @@ class GameScene extends Phaser.Scene{
         console.log('game scene')
 
         //images
-        this.load.image('starBackground', 'assets/starBackground.png')
-        this.load.image('ship', 'assets/spaceShip.png')
-        this.load.image('misile', 'assets/missile.png')
-        this.load.image('alien', 'assets/alien.png')
-        this.load.image('startButton', 'assets/start.png')
-        this.load.image('menuButton', 'assets/menu_button.png')
+        this.load.image('starBackground', './assets/space.jpeg')
+        this.load.image('ship', './assets/ship.png')
+        this.load.image('misile', './assets/missile.png')
+        this.load.image('alien', './assets/alien.png')
 
         //audio
-        this.load.audio('laser', 'assets/laser1.wav')
-        this.load.audio('explosion', 'assets/barrelExploding.wav')
-        this.load.audio('bomb', 'assets/bomb.wav')
+        this.load.audio('laser', './assets/laser1.wav')
+        this.load.audio('explosion', './assets/barrelExploding.wav')
+        this.load.audio('bomb', './assets/bomb.wav')
     }
 
     create(data){
-        this.background = this.add.sprite(0, 0, 'starBackground').setScale(2.0)
+        this.background = this.add.sprite(0, 0, 'starBackground').setScale(0.8)
         this.background.setOrigin(0, 0)
-        
-        this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle)
 
-        this.ship = this.physics.add.sprite(1920/2, 1080 - 100, 'ship')
+        // Rock group
+        this.rockGroup = this.physics.add.group({});
 
-        this.startButton = this.add.sprite(1920/2, 1080 - 800 , 'startButton').setVisible(false);
-        this.menuButton = this.add.sprite(1920/2, 1080 - 1000, 'menuButton').setVisible(false);
-
-        //Create a group for the missles
+        //Create a group for the missles and aliens, Also create the first alien
         this.missileGroup = this.physics.add.group()
         this.aliensGroup = this.add.group()
-        this.createAlien()
+        this.createRock();
+        this.createAlien();
+        
+
+        //add the ship
+        this.ship = this.physics.add.sprite(450/2, 800 - 100, 'ship').setScale(0.3)
+        this.ship.setInteractive({draggable: true})
+        this.ship.setCollideWorldBounds(true)
+        this.ship.on('drag', (pointer, dragX, dragY)=>{
+            this.ship.x = dragX
+            this.ship.y = dragY
+            
+        })
+        this.ship.on('pointerdown', ()=>{
+            this.touchFire = true;
+        })
+
+        // Touch to loop fire
+        this.time.addEvent({
+            delay: 200,
+            callback: ()=>{
+                if(this.touchFire === true){
+                const aNewMissile = this.physics.add.sprite(this.ship.x-20, this.ship.y, 'misile').setScale(0.5)
+                const bNewMissile = this.physics.add.sprite(this.ship.x+20, this.ship.y, 'misile').setScale(0.5)
+                this.missileGroup.add(aNewMissile)
+                this.missileGroup.add(bNewMissile)
+                // this.sound.play('laser')
+                }
+            },
+            loop: true  
+        })
 
         // Collision between missles and aliens
-        this.physics.add.collider(this.missileGroup, this.aliensGroup, function(missileCollide, alienCollide){
+        this.physics.add.collider(this.missileGroup, this.aliensGroup, (missileCollide, alienCollide)=>{
             missileCollide.destroy()
             alienCollide.destroy()
-            this.sound.play('explosion')
+            // this.sound.play('explosion')
             this.score += 1;
             this.scoreText.setText('Score: ' + this.score.toString())
-            this.createAlien()
-            this.createAlien()
-        }.bind(this))
+            if(this.score === 40){
+                this.level = 2;
+                this.gameText = this.add.text(450/2, 800 - 600, 'Level 2', this.gameTextStyle).setOrigin(0.5)
+            }
+            if(this.aliensGroup.getLength()<10 && this.level === 1){
+                this.createAlien()
+                this.createAlien()
+                console.log(this.aliensGroup.getLength())
+            }
+        })
 
-        //Collision between ship and alien
-        this.physics.add.collider(this.ship, this.aliensGroup, function (shipCollide, alienCollide){
-            this.sound.play('bomb')
-            this.physics.pause()
-            shipCollide.destroy()
-            alienCollide.destroy()
-            this.gameOverText = this.add.text(1920/2, 1080 - 600, 'Game Over!\nScore: ' + this.score, this.gameTextStyle).setOrigin(0.5)
-
+        // Score and Pause text
+        this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle);
+        this.pauseText = this.add.text(400-50, 10, 'Pause', this.scoreTextStyle);
+        this.pauseText.setInteractive({useHandCursor: true})
+        this.pauseText.on('pointerup', ()=>{
             this.startButton.setVisible(true);
             this.menuButton.setVisible(true);
 
-            this.startButton.setInteractive({useHandCursor: true})
-            this.startButton.on('pointerdown', function(){
-            this.scene.start('gameScene')
-            }.bind(this))
+            this.physics.pause();
+            this.touchFire = false;
+        })
 
-            this.menuButton.setInteractive({useHandCursor: true})
-            this.menuButton.on('pointerdown', function(){
-            this.scene.start('menuScene')
-            }.bind(this))
-        }.bind(this))
+        //Collision between ship and alien
+        this.physics.add.collider(this.ship, this.aliensGroup, (shipCollide, alienCollide)=>{
+            // this.sound.play('bomb')
+            this.physics.pause();
+            // shipCollide.destroy();
+            alienCollide.destroy();
+            this.touchFire = false;
+            this.gameOverText = this.add.text(450/2, 800 - 600, 'Game Over!\nScore: ' + this.score, this.gameTextStyle).setOrigin(0.5)
+
+            this.startButton.setVisible(true);
+            this.menuButton.setVisible(true);
+        })
+
+        this.physics.add.collider(this.missileGroup, this.rockGroup, (missile, rock)=>{
+            missile.destroy();
+            rock.health -= 1;
+            
+            if(rock.health === 0){
+                rock.destroy();
+                this.score += rock.maxHealth;
+                this.scoreText.setText('Score: '+ this.score.toString())
+            }
+        })
+
+        this.time.addEvent({
+            delay: 2000,
+            callback: ()=>{
+                this.createAlien();
+                this.createRock();
+                this.createRock();
+                this.createAlien();
+                // this.gameText.setText('')
+            },
+            loop: true  
+        })
+
+        // this.time.addEvent({
+        //     delay: 3000,
+        //     callback: ()=> this.createRock(),
+        //     loop: true
+        // })
+
+        // Menu and Restart buttons
+        this.startButton = this.add.sprite(450/2, 400 , 'startButton').setScale(0.4).setVisible(false);
+        this.menuButton = this.add.sprite(450/2, 480, 'menuButton').setScale(0.4).setVisible(false);
+        this.startButton.setInteractive({useHandCursor: true})
+        this.startButton.on('pointerdown', ()=>{
+        this.scene.start('gameScene')
+        this.score = 0;
+        })
+
+        this.menuButton.setInteractive({useHandCursor: true})
+        this.menuButton.on('pointerdown', ()=>{
+        this.scene.start('menuScene')
+        })
+        // Menu and Restart buttons end
     }
 
     update(time, delta){
@@ -121,8 +232,8 @@ class GameScene extends Phaser.Scene{
             if(this.fireMissle === false){
                 //fire a missle
                 this.fireMissle = true
-                const aNewMissle = this.physics.add.sprite(this.ship.x, this.ship.y, 'misile')
-                this.missileGroup.add(aNewMissle)
+                const aNewMissile = this.add.rectangle(this.ship.x, this.ship.y, 10, 50, '#000000ff')
+                this.missileGroup.add(aNewMissile)
                 this.sound.play('laser')
             }
         }
